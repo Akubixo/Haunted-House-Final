@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -14,6 +15,17 @@ public class PlayerMovement : MonoBehaviour
     public float walkSpeed = 1.0f;
     public float turnSpeed = 20f;
 
+
+    // Stamina variables
+    public Image StaminaBar;
+    public float maxStamina = 100f;
+    public float currentStamina;
+    public float staminaDecreaseRate = 10f;
+    public float staminaIncreaseRate = 5f;
+
+    // Running mechanic(speed boost as described in the assignment)
+    public bool isRunning = false;
+
     Rigidbody m_Rigidbody;
     Vector3 m_Movement;
     Quaternion m_Rotation = Quaternion.identity;
@@ -24,6 +36,49 @@ public class PlayerMovement : MonoBehaviour
         m_Rigidbody = GetComponent<Rigidbody>();
         MoveAction.Enable();
         m_Animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        //If statement for running mechanic
+        if (Input.GetKeyDown(KeyCode.LeftShift) && currentStamina > 0)
+        {
+            isRunning = true;
+            walkSpeed = 2.0f; // Increase speed when running
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isRunning = false;
+            walkSpeed = 1.0f; // Reset speed when not running
+        }
+
+
+        if (isRunning && currentStamina > 0)
+    {
+        currentStamina -= staminaDecreaseRate * Time.deltaTime;
+
+        // If stamina runs out, stop running
+        if (currentStamina <= 0)
+        {
+            currentStamina = 0;
+            isRunning = false;
+            walkSpeed = 1.0f;
+        }
+    }
+    else
+    {
+        // Recover stamina when NOT running
+        if (currentStamina < maxStamina)
+        {
+            currentStamina += staminaIncreaseRate * Time.deltaTime;
+            if (currentStamina > maxStamina)
+                currentStamina = maxStamina;
+        }
+    }
+
+    // Update UI bar
+    StaminaBar.fillAmount = currentStamina / maxStamina;
+
     }
 
     void FixedUpdate()
@@ -46,6 +101,10 @@ public class PlayerMovement : MonoBehaviour
 
         m_Rigidbody.MoveRotation(m_Rotation);
         m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * walkSpeed * Time.deltaTime);
+
+        
+
+         // Handle footstep audio
 
         if (isWalking)
         {
