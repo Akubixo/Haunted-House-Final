@@ -151,6 +151,12 @@ MonoBehaviour:
     m_Flags: 0
   walkSpeed: 1
   turnSpeed: 20
+  StaminaBar: {fileID: 0}
+  maxStamina: 100
+  currentStamina: 0
+  staminaDecreaseRate: 10
+  staminaIncreaseRate: 5
+  isRunning: 0
 --- !u!95 &3978458115008773043
 Animator:
   serializedVersion: 7
@@ -202,7 +208,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 0.10845685
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
